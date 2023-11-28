@@ -1,0 +1,23 @@
+
+
+.item:hover{
+  color:#2595FE;
+}
+
+.custom-nav-link{
+  background-color: #E2EDFF;
+}
+
+.fixed-sidebar{
+  position: fixed;
+}
+
+.nav-user{
+  margin-top: 20%;
+  margin-left: 2%;
+
+}
+
+.dot{
+  margin-left: 60%;
+}
