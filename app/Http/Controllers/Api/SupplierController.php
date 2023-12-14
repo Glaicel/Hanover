@@ -4,73 +4,45 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Requests\SupplierRequest;
+use Illuminate\Support\Facades\DB;
 
 class SupplierController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function generate_supplier ()
     {
-        return Supplier::all();
+        try {
+            $suppliers = DB::select('SELECT * FROM sales.suppliers');
+            return response()->json($suppliers);
+        } catch (\Exception $e) {
+            // Log the exception
+            \Log::error('Error fetching supplier: ' . $e->getMessage());
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function insert_supplier (Request $r) 
     {
-        //
+        DB::insert ('INSERT INTO production.SUPPLIER (supplier_name) VALUES (:a)', [
+            'a' =>$r->input('supplier_name')
+        ]);
+    }
+ 
+    public function update_supplier (Request $r) 
+    {
+        DB::update ('UPDATE production.SUPPLIER SET supplier_name = :a WHERE supplier_id= :b', [
+            'a' =>$r->input('supplier_name'),
+            'b' =>$r->input('id')
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(SupplierRequest $request)
+    public function delete_supplier(Request $r)
     {
-        $validated = $request->validated();
-        $supplier = Supplier::create($validated);
-
-        return $supplier;
+        DB::delete('DELETE FROM production.SUPPLIER WHERE supplier_id = :a',[
+            'a' => $r->input('id'),
+        ]);
+        return 'Deleted Successfully!';
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        return Supplier::findOrFail($id);
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(SupplierRequest $request, string $id)
-    {
-        $validated = $request->validated();
-        $supplier = Supplier::findOrFail($id);
-        $supplier->update($validated);
-
-        return $supplier;
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $supplier = Option::findOrFail($id);
-        $supplier->delete();
-
-        return $supplier;
-    }
 }

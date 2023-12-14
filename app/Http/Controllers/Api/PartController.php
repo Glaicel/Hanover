@@ -4,73 +4,65 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Requests\PartRequest;
+use Illuminate\Support\Facades\DB;
 
 class PartController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function generate_parts () 
     {
-        return Part::all();
+        try {
+            $parts = DB::select('SELECT * FROM production.parts');
+            return response()->json($parts);
+        } catch (\Exception $e) {
+            // Log the exception
+            \Log::error('Error fetching parts: ' . $e->getMessage());
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function insert_parts (Request $r) 
     {
-   
+        DB::insert ('INSERT INTO production.PARTS (company_id, supplier_id, plant_id, parts_name, price, availability, inventory_item_id ) VALUES (:a, :b, :c, :d, :e, :f, :g)', [
+            'a' =>$r->input('company_id'),
+            'b' =>$r->input('supplier_id'),
+            'c' =>$r->input('plant_id'),
+            'd' =>$r->input('parts_name'),
+            'e' =>$r->input('price'),
+            'f' =>$r->input('availability'),
+            'g' =>$r->input ('inventory_item_id')
+
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(PartRequest $request)
-    {
-        $validated = $request->validated();
-        $part = Part::create($validated);
+    public function parts(){
+        $parts = DB::table('production.parts')
+        ->join('sales.suppliers', 'production.parts.supplier_id', '=', 'sales.suppliers.supplier_id')
+        ->select('production.parts.*', 'sales.suppliers.supplier_name')
+        ->get();
 
-        return $part;
+        return response()->json($parts);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update_parts (Request $r) 
     {
-        return Part::findOrFail($id);
+        DB::update ('UPDATE production.PARTS SET company_id = :a, supplier_id= :b, plant_id = :c, parts_name= :d, price = :e, availability = :f,  WHERE parts_id= :g', [
+            'a' =>$r->input('company_id'),
+            'b' =>$r->input('supplier_id'),
+            'c' =>$r->input('plant_id'),
+            'd' =>$r->input('parts_name'),
+            'e' =>$r->input('price'),
+            'f' =>$r->input('availability'),
+            'g' =>$r->input('id')
+        ]);
+    }
+    
+    public function delete_parts(Request $r)
+    {
+        DB::delete('DELETE FROM production.PARTS WHERE parts_id = :a',[
+            'a' => $r->input('id'),
+        ]);
+        return 'Deleted Successfully!';
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-       
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(PartRequest $request, string $id)
-    {
-        $validated = $request->validated();
-        $part = Part::findOrFail($id);
-        $part->update($validated);
-
-        return $part;
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $part = Part::findOrFail($id);
-        $part->delete();
-
-        return $part;
-    }
 }

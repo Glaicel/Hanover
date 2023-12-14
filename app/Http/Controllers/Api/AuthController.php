@@ -13,9 +13,14 @@ class AuthController extends Controller
 {
     public function login(UserRequest $request)
     {
-        $user = User::where('email', $request->email)->first();
+
+        $credentials = $request->only('email', 'password', 'role'); //include the role in the login credentials 
+
+        $user = User::where('email', $credentials['email'])
+            ->where('role', $credentials['role'])
+            ->first();
      
-        if ( !$user || !Hash::check($request->password, $user->password) ) {
+        if ( !$user || !Hash::check($credentials['password'], $user->password) ) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -23,10 +28,16 @@ class AuthController extends Controller
 
         $response = [
             'user'      => $user,
-            'token'     => $user->createToken($request->email)->plainTextToken
+            'token'     => $user->createToken($request->email)->plainTextToken,
         ];
      
         return $response;
+    }
+
+    public function showRegistrationForm()
+    {
+        // You can create a view for the registration form if needed
+        return view('auth.register');
     }
 
     /**
@@ -42,4 +53,7 @@ class AuthController extends Controller
 
         return $response;
     }
+
+
+
 }

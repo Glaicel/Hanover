@@ -21,38 +21,37 @@ class UserRequest extends FormRequest
      */
     public function rules(): array
     {
-        if( request()->routeIs('user.login') ) {
+        if (request()->routeIs('user.login')) {
             return [
-                'email'     => 'required|string|email|max:255',
-                'password'  => 'required|min:8',
+                'email' => 'required|string|email|max:255',
+                'password' => 'required|min:8',
+            ];
+        } else if (request()->routeIs('user.store')) {
+            return [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|unique:users|max:255',
+            'password' => 'required|string|min:8',
+            'address' => 'required|string',
+            'phone_number' => 'required|string',
+            ];
+        } else if (request()->routeIs('user.update')) {
+            return [
+                'name' => 'required|string|max:255'
+            ];
+        } else if (request()->routeIs('user.email')) {
+            return [
+                'email' => 'required|string|email|max:255',
+            ];
+        } else if (request()->routeIs('user.password')) {
+            return [
+                'password' => 'required|confirmed|min:8',
+            ];
+        } else if (request()->routeIs('user.image') || request()->routeIs('profile.image') || request()->routeIs('ocr.image')) {
+            return [
+                'profile_image' => 'required|image|mimes:jpg,bmp,png|max:2048',
             ];
         }
-        else if( request()->routeIs('user.store') ) {
-            return [
-                'name'      => 'required|string|max:255',
-                'email'     => 'required|string|email|unique:App\Models\User,email|max:255',
-                'password'  => 'required|min:8',
-            ];
-        }
-        else if( request()->routeIs('user.update') ){
-            return [
-                'name'      => 'required|string|max:255'
-            ];
-        }
-        else if( request()->routeIs('user.email') ){
-            return [
-                'email'     => 'required|string|email|max:255',
-            ];
-        }
-        else if( request()->routeIs('user.password') ){
-            return [
-                'password'  => 'required|confirmed|min:8',
-            ];
-        }
-        else if( request()->routeIs('user.image') || request()->routeIs('profile.image') || request()->routeIs('ocr.image') ){
-            return [
-                'image'     => 'required|image|mimes:jpg,bmp,png|max:2048',
-            ];
-        }
+
+        return [];
     }
 }
