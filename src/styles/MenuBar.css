@@ -13,15 +13,34 @@ html, body {
   margin-left: 10%;
 }
 
-.headers{
+.headers{ 
   margin-left: 10.5%;
   margin-top: 4%;
   font-family:sans-serif;
 }
 
 .sub-headers{
-  margin-top: 1.5%;
+  margin-top: 1.5%; 
   margin-left: 10.5%;
   font-weight: normal;
   font-family:sans-serif;
+}
+
+/* Add this CSS to your stylesheet or in the style tag of your component */
+.hover-card {
+  transition: transform 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  border: 1px solid transparent; 
+}
+
+.hover-card:hover {
+  transform: scale(1.05); /* You can adjust the scale factor based on your preference */
+  border-color: #007bff; / /* You can adjust the scale factor based on your preference */
+}
+
+
+footer {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
 }

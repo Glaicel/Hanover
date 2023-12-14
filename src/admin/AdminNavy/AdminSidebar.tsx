@@ -2,9 +2,15 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import '../styles/AdminSidebar.css'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 
 function AdminSidebar() {
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+
+        navigate('/login');
+    };
 
     return (
         <>
@@ -16,13 +22,13 @@ function AdminSidebar() {
                     <li className="fs-4 my-1 py-2 py-sm-0">
                         <NavLink to="/admin-dashboard" className="nav-link text-black fs-5" aria-current="page">
                             <i className='bi bi-house-door item'></i>
-                            <span className='ms-1 d-none d-sm-inline item'>Dashboard</span>
+                            <span className='ms-2 item'>Dashboard</span>
                         </NavLink>
                     </li>
-                    <li className="fs-4 my-1 py-2 py-sm-0">
+                    <li className="fs-4 my-1 py-2 py-sm-0 mt-3">
                         <NavLink to="/admin-orders" className="nav-link text-black fs-5" aria-current="page">
-                            <i className='bi bi-sort-up item'></i>
-                            <span className='ms-2 item'>Orders</span>
+                            <i className='bi bi-cart item'></i>
+                            <span className='ms-2 item'>Purchase</span>
                         </NavLink>
                     </li>
                     <li className="nav-item text-black fs-4 mt-4">
@@ -39,19 +45,20 @@ function AdminSidebar() {
                     </li>
                     <li className="nav-item text-black fs-4 mt-4">
                         <NavLink to="/admin-stocks" className="nav-link text-black fs-5" aria-current="page">
-                            <i className="bi bi-box item"></i>
+                            <i className="bi bi-graph-up-arrow item"></i>
                             <span className='ms-2 item'>Stocks</span>
                         </NavLink>
                     </li>
                     <li className="nav-item text-black fs-4 mt-4">
-                        <NavLink to="/admin-settings" className="nav-link text-black fs-5" aria-current="page">
-                            <i className="bi bi-gear item"></i>
-                            <span className='ms-2 item'>Settings</span>
-                        </NavLink>
+                        <button className="nav-link text-black fs-5" onClick={handleLogout}>
+                            <i className="bi bi-box item"></i>
+                            <span className='ms-2 item'>Sign Out</span>
+                        </button>
                     </li>
                     <li className="nav-user text-black fs-4">
                         <Link to="" className="nav-link text-black fs-5" aria-current="page">
                             <i className="bi bi-person-circle"></i>
+                            <span className='ms-2 item'>Admin</span>
                         </Link>
                     </li>
                 </ul>
